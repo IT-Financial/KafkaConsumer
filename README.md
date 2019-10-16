@@ -1,2 +1,0 @@
-# KafkaConsumer
-KafkaConsumer
