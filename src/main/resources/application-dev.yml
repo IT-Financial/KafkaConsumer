@@ -1,0 +1,83 @@
+server:
+  port: 8888
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  profiles: dev
+  application:
+    name: kafka-server
+  datasource:
+    url: jdbc:mysql://172.190.26.17:3306/kcaom?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: htzq600837
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    max-active: 20
+    initial-size: 1
+    min-idle: 3
+    max-wait: 60000
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    validation-query: SELECT 'x'
+    test-while-idle: true
+    test-on-borrow: false
+    test-on-return: false
+    # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat,wall,log4j
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true :druid.stat.slowSqlMillis=3000
+  kafka:
+    # 指定kafka 代理地址，可以多个
+    #bootstrap-servers: 172.190.108.87:9092, 172.190.108.88:9092, 172.190.108.89:9092
+    bootstrap-servers: 192.168.31.125:9092
+    #监听topic
+    #listener_topics: GD_TST_TRD-BDP_BANK_TRF_INTERFACE_NN_R3P3,GD_TST_TRD-BDP_BANK_ACC_INTERFACE_NN_R3P3,GD_TST_TRD-BDP_OTHER_CHANGE_NN_R3P3,GD_TST_TRD-BDP_FUND_STOCK_CHANGE_NN_R3P3,GD_TST_SCO-CMM_SCOS_AUDIT_TASK_NN_R3P3,GD_TST_SCO-CMM_SCOS_BUSINESS_ACCEPT_NN_R3P3,GD_TST_SCO-CMM_SCOS_BUSINESS_CHOOSE_NN_R3P3,GD_TST_SCO-CMM_SCOS_BUS_SCHEDULE_DETAIL_NN_R3P3,GD_TST_OBH-CMM_USER_PRESENCE_NN_R3P3,GD_TST_OBH-CMM_BASE_ORGANIZATION_NN_R3P3,GD_TST_OBH-CMM_MESS_TASK_NN_R3P3,GD_TST_SCO-CMM_SCOS_BUS_BASIC_TASK_INFO_NN_R3P3
+    listener_topics: GD_PROD_TRD-BDP_BANK_ACC_INTERFACE_NN_R3P3
+    producer:
+      retries: 0
+      batch-size: 1000      # 每次批量发送消息的数量
+      buffer-memory: 33554432    # 缓存容量
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer   # 指定消息key和消息体的编解码方式
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: kcaom-kafka-consumer_test0010   # 指定默认消费者group id
+      auto-commit-interval: 100
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer  # 指定消息key和消息体的编解码方式
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      listener:   # 指定listener 容器中的线程数，用于提高并发量
+        concurrency: 3
+
+logging:
+  config: classpath:logback-spring.xml
+
+config:
+  crd_bank_acc_interface : GD_TST_CRD-BDP_BANK_ACC_INTERFACE_R3P3
+  crd_bank_trf_interface : GD_TST_CRD-BDP_BANK_TRF_INTERFACE_R3P3
+  olpayTradeRecord : GD_TST_KSXF-BANK_BDP_NN_R3P3
+  accountoperation : GD_TST_GLD-BDP_ACCOUNTOPERATION_NN_R3P3
+  fundDetail : GD_TST_GLD-BDP_FUND_DETAIL_NN_R3P3
+  opt_bank_acc_interface : GD_TST_OPT-BDP_BANK_ACC_INTERFACE_NN_R3P3
+  opt_bank_trf_interface : GD_TST_OPT-BDP_BANK_TRF_INTERFACE_NN_R3P3
+  bank_trf_interface : GD_TST_TRD-BDP_BANK_TRF_INTERFACE_NN_R3P3
+  bank_acc_interface : GD_TST_TRD-BDP_BANK_ACC_INTERFACE_NN_R3P3
+  check_summary : e
+  other_change : GD_TST_TRD-BDP_OTHER_CHANGE_NN_R3P3
+  fund_stock_change : GD_TST_TRD-BDP_FUND_STOCK_CHANGE_NN_R3P3
+  scos_audit_task : GD_TST_SCO-CMM_SCOS_AUDIT_TASK_NN_R3P3
+  scos_business_accept : GD_TST_SCO-CMM_SCOS_BUSINESS_ACCEPT_NN_R3P3
+  scos_business_choose : GD_TST_SCO-CMM_SCOS_BUSINESS_CHOOSE_NN_R3P3
+  scos_bus_schedule_detail : GD_TST_SCO-CMM_SCOS_BUS_SCHEDULE_DETAIL_NN_R3P3
+  user_presence :  GD_TST_OBH-CMM_USER_PRESENCE_NN_R3P3
+  base_organization : GD_TST_OBH-CMM_BASE_ORGANIZATION_NN_R3P3
+  mess_task : GD_TST_OBH-CMM_MESS_TASK_NN_R3P3
+  scos_bus_basic_taskinfo: GD_TST_SCO-CMM_SCOS_BUS_BASIC_TASK_INFO_NN_R3P3
+  scos_audit_schedule_log: e
+  scos_audit_log: e
+  base_sys_user: e
+  user_business_flow: e
+  user_accounts: e
+  scos_business_choose_detail: e
+  not_use : NOT_USE
+  interval : 20000
+  batchSize : 200
